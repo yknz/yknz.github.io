@@ -1,0 +1,65 @@
+name: Generate article from Qiita with hexiita
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      qiita-url:
+        description: "Qiita URL"
+        required: true
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  id-token: write
+  pages: write
+  pull-requests: write
+
+jobs:
+  create-article-pr:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Tokyo
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Mask input
+        run: echo "::add-mask::${{ github.event.inputs.qiita-url }}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Go tools
+        run: |
+          mkdir ~/bin
+          export GOBIN=~/bin
+          go install github.com/ma91n/hexiita@latest
+
+      - name: Generate article
+        run: |
+          mkdir -p ~/tech-blog/source/_posts ~/tech-blog/source/images
+          cd ~/tech-blog
+          ~/bin/hexiita ${{ github.event.inputs.qiita-url }}
+          cd ${{ github.workspace }}
+          cp -rT ~/tech-blog .
+
+      - name: Get article title
+        id: get-article-title
+        run: |
+          title=`curl -s "${{ github.event.inputs.qiita-url }}" | grep -oP '(?<=<title>).*(?=\s\#.*</title>)'`
+          echo "title=$title" >> $GITHUB_OUTPUT
+
+      - name: Commit and push article to new branch
+        id: commit-and-push
+        run: |
+          branch=actions/run_id/${{ github.run_id }}
+          echo branch=$branch >> $GITHUB_OUTPUT
+          git config --local user.name "${{ github.actor }}"
+          git config --local user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git checkout -b $branch
+          git add .
+          git commit -m "Add article: ${{ steps.get-article-title.outputs.title }}"
+          git push -u origin $branch
+
+      - name: Open pull request
+        run: |
+          gh pr create --base main --head ${{ steps.commit-and-push.outputs.branch }} --fill --body "This PR is created by GitHub Actions workflow."
