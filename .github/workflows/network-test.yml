@@ -11,3 +11,8 @@ jobs:
     steps:
       - name: Network test Qiita
         run: curl https://qiita.com/organizations/future/activities.atom
+
+      - name : Check proxy
+        run: |
+          echo $http_proxy
+          echo $https_proxy
