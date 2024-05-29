@@ -35,14 +35,14 @@ jobs:
         run: |
           mkdir -p ~/tech-blog/source/_posts ~/tech-blog/source/images
           cd ~/tech-blog
-          ~/bin/hexiita ${{ secrets.QIITA_URL }}
+          ~/bin/hexiita ${{ github.event.inputs.qiita-url }}
           cd ${{ github.workspace }}
           cp -rT ~/tech-blog .
 
       - name: Get article title
         id: get-article-title
         run: |
-          title=`curl -s "${{ secrets.QIITA_URL }}" | grep -oP '(?<=<title>).*(?=\s\#.*</title>)'`
+          title=`curl -s "${{ github.event.inputs.qiita-url }}" | grep -oP '(?<=<title>).*(?=\s\#.*</title>)'`
           echo "title=$title" >> $GITHUB_OUTPUT
 
       - name: Commit and push article to new branch
