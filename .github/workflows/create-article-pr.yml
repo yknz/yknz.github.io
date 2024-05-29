@@ -21,9 +21,10 @@ jobs:
     env:
       TZ: Asia/Tokyo
       GH_TOKEN: ${{ github.token }}
+      QIITA_URL: ${{ github.event.inputs.qiita-url }}
     steps:
       - name: Mask input
-        run: echo "::add-mask::${{ github.event.inputs.qiita-url }}"
+        run: echo "::add-mask::$QIITA_URL"
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,14 +39,14 @@ jobs:
         run: |
           mkdir -p ~/tech-blog/source/_posts ~/tech-blog/source/images
           cd ~/tech-blog
-          ~/bin/hexiita ${{ github.event.inputs.qiita-url }}
+          ~/bin/hexiita $QIITA_URL
           cd ${{ github.workspace }}
           cp -rT ~/tech-blog .
 
       - name: Get article title
         id: get-article-title
         run: |
-          title=`curl -s "${{ github.event.inputs.qiita-url }}" | grep -oP '(?<=<title>).*(?=\s\#.*</title>)'`
+          title=`curl -s "$QIITA_URL" | grep -oP '(?<=<title>).*(?=\s\#.*</title>)'`
           echo "title=$title" >> $GITHUB_OUTPUT
 
       - name: Commit and push article to new branch
