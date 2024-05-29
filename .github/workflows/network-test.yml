@@ -1,0 +1,13 @@
+name: network test
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  network-test:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Tokyo
+    steps:
+      - name: Network test Qiita
+        run: curl https://qiita.com/organizations/future/activities.atom
