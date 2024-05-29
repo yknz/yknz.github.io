@@ -58,10 +58,24 @@ jobs:
       - name: Build with hexo
         run: ${{ steps.detect-package-manager.outputs.runner }} hexo generate
 
+      - name: Fail
+        run: false
+
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
+
+  re-run:
+      needs: build
+      if: failure() && fromJSON(github.run_attempt) < 3
+      runs-on: ubuntu-latest
+      steps:
+        - env:
+            GH_REPO: ${{ github.repository }}
+            GH_TOKEN: ${{ github.token }}
+            GH_DEBUG: api
+          run: gh workflow run re-run-deploy.yml -F run_id=${{ github.run_id }}
 
   deploy:
     environment:
