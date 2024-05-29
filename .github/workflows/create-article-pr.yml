@@ -22,11 +22,6 @@ jobs:
       TZ: Asia/Tokyo
       GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Mask input
-        run: echo "::add-mask::$QIITA_URL"
-        env:
-          QIITA_URL: ${{ github.event.inputs.qiita-url }}
-
       - name: Checkout
         uses: actions/checkout@v4
 
