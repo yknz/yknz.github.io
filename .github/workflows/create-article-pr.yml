@@ -2,6 +2,7 @@ name: Generate article from Qiita with hexiita
 
 on:
   repository_dispatch
+    types: [create-article-pr]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
