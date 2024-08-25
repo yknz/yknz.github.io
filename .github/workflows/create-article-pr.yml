@@ -27,11 +27,17 @@ jobs:
           export GOBIN=~/bin
           go install github.com/ma91n/hexiita@latest
 
+      - name: Add mask
+        run: |
+          echo "::add-mask::${{ github.event.client_payload.article_url }}" > cmd.txt
+          cat cmd.txt
+          rm cmd.txt
+
       - name: Generate article
         run: |
           mkdir -p ~/tech-blog/source/_posts ~/tech-blog/source/images
           cd ~/tech-blog
-          ~/bin/hexiita "::add-mask::${{ github.event.client_payload.article_url }}"
+          ~/bin/hexiita ${{ github.event.client_payload.article_url }}
           cd ${{ github.workspace }}
           cp -rT ~/tech-blog .
 
