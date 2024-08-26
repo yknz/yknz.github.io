@@ -14,5 +14,11 @@ jobs:
           jq < ${GITHUB_EVENT_PATH} -r .client_payload.message2 >> cmd.txt
           cat cmd.txt
           rm cmd.txt
-          echo "${{ github.event.client_payload.message }}"
-          echo "${{ github.event.client_payload.message2 }}"
+
+      - name: Echo Message
+        run: |
+          echo "${message}"
+          echo "${message2}"
+        env:
+          message: ${{ github.event.client_payload.message }}
+          message2: ${{ github.event.client_payload.message2 }}
