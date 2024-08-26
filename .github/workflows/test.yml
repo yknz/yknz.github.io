@@ -17,8 +17,5 @@ jobs:
 
       - name: Echo Message
         run: |
-          echo "${message}"
-          echo "${message2}"
-        env:
-          message: ${{ github.event.client_payload.message }}
-          message2: ${{ github.event.client_payload.message2 }}
+          echo ${{ github.event.client_payload.message }}
+          echo ${{ github.event.client_payload.message2 }}
