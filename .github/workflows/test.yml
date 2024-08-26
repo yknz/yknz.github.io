@@ -7,4 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:      
       - name: Echo Message
-        run: jq < ${GITHUB_EVENT_PATH}
+        run: |
+          echo -n '::add-mask::' > cmd.txt
+          jq < ${GITHUB_EVENT_PATH} -r .client_payload.message >> cmd.txt
+          cat cmd.txt
+          rm cmd.txt
+          echo ${{ github.event.client_payload.message }}
