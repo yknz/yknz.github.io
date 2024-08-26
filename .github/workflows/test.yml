@@ -6,10 +6,13 @@ jobs:
   echo_message:
     runs-on: ubuntu-latest
     steps:      
-      - name: Echo Message
+      - name: Add Mask
         run: |
           echo -n '::add-mask::' > cmd.txt
           jq < ${GITHUB_EVENT_PATH} -r .client_payload.message >> cmd.txt
+          echo -n '::add-mask::' >> cmd.txt
+          jq < ${GITHUB_EVENT_PATH} -r .client_payload.message2 >> cmd.txt
           cat cmd.txt
           rm cmd.txt
-          echo ${{ github.event.client_payload.message }}
+          echo "${{ github.event.client_payload.message }}"
+          echo "${{ github.event.client_payload.message2 }}"
