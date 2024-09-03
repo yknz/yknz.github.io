@@ -9,3 +9,6 @@ jobs:
     steps:
       - name: Check version
         run: python3 --version
+        
+      - name: Install package
+        run: pip install python-frontmatter
