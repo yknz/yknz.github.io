@@ -1,0 +1,11 @@
+name: Check python version
+
+on:
+  workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check version
+        run: python3 --version
