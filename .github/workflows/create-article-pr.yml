@@ -27,9 +27,6 @@ jobs:
           export GOBIN=~/bin
           go install github.com/ma91n/hexiita@latest
 
-      - name: Install Python tool
-        run: pip install matter-edit@git+https://github.com/yknz/matter-edit.git
-
       - name: Add Mask
         run: |
           echo -n '::add-mask::' > cmd.txt
