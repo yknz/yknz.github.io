@@ -46,7 +46,11 @@ jobs:
           ~/bin/hexiita ${{ github.event.client_payload.article_url }}
           cd ${{ github.workspace }}
           cp -rT ~/tech-blog .
-
+          
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+    
       - name: Install Python tool
         run: pip install matter-edit@git+https://github.com/yknz/matter-edit.git
 
