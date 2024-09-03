@@ -21,11 +21,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Go tools
+      - name: Install Go tool
         run: |
           mkdir ~/bin
           export GOBIN=~/bin
           go install github.com/ma91n/hexiita@latest
+
+      - name: Install Python tool
+        run: pip install matter-edit@git+https://github.com/yknz/matter-edit.git
 
       - name: Add Mask
         run: |
@@ -43,6 +46,24 @@ jobs:
           ~/bin/hexiita ${{ github.event.client_payload.article_url }}
           cd ${{ github.workspace }}
           cp -rT ~/tech-blog .
+
+      - name: Install Python tool
+        run: pip install matter-edit@git+https://github.com/yknz/matter-edit.git
+
+      - name: Update author
+        run: ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit update source/_posts/{} --params author=${{ github.event.client_payload.author }}
+
+      - name: Get thumbnail filepath
+        id: thumbnail-filepath
+        if: ${{ github.event.client_payload.thumbnail_url }} != null
+        run: |
+          thumbnailpath=`ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit show source/_posts/{} --param thumbnail | sed -e 's/^/\source/g'`
+          echo "thumbnailpath=$thumbnailpath" >> $GITHUB_OUTPUT
+
+      - name: Download thumbnail
+        if: ${{ github.event.client_payload.thumbnail_url }} != null
+        run: |
+          wget ${{ github.event.client_payload.thumbnail_url }} -O ${{ steps.thumbnail-filepath.outputs.thumbnailpath }}
 
       - name: Get article title
         id: get-article-title
