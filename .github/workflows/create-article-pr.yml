@@ -57,7 +57,7 @@ jobs:
       - uses: actions/github-script@v6
         id: is_null
         with:
-          script: return github.event.client_payload.thumbnail_url === null
+          script: return ${{ github.event.client_payload.thumbnail_url }} === null
           
       - name: Get thumbnail filepath
         id: thumbnail-filepath
