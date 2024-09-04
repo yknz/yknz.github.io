@@ -64,7 +64,7 @@ jobs:
       - name: Download thumbnail
         if: ${{ github.event.client_payload.thumbnail_url != '' }}
         run: |
-          wget ${{ github.event.client_payload.thumbnail_url }} -O ${{ steps.thumbnail-filepath.outputs.thumbnailpath }}
+          wget -O ${{ steps.thumbnail-filepath.outputs.thumbnailpath }} ${{ github.event.client_payload.thumbnail_url }} 
 
       - name: Get article title
         id: get-article-title
