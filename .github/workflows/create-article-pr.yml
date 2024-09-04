@@ -56,13 +56,13 @@ jobs:
 
       - name: Get thumbnail filepath
         id: thumbnail-filepath
-        if: ${{ github.event.client_payload.thumbnail_url }} !== null
+        if: ${{ github.event.client_payload.thumbnail_url !== null}}
         run: |
           thumbnailpath=`ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit show source/_posts/{} --param thumbnail | sed -e 's/^/\source/g'`
           echo "thumbnailpath=$thumbnailpath" >> $GITHUB_OUTPUT
 
       - name: Download thumbnail
-        if: ${{ github.event.client_payload.thumbnail_url }} !== null
+        if: ${{ github.event.client_payload.thumbnail_url !== null}}
         run: |
           wget ${{ github.event.client_payload.thumbnail_url }} -O ${{ steps.thumbnail-filepath.outputs.thumbnailpath }}
 
