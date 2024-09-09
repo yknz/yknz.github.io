@@ -20,6 +20,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Python tool
+        run: pip install matter-edit@git+https://github.com/yknz/matter-edit.git
 
       - name: Install Go tool
         run: |
@@ -43,22 +50,15 @@ jobs:
           ~/bin/hexiita ${{ github.event.client_payload.article_url }}
           cd ${{ github.workspace }}
           cp -rT ~/tech-blog .
-          
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-    
-      - name: Install Python tool
-        run: pip install matter-edit@git+https://github.com/yknz/matter-edit.git
 
       - name: Update author
         run: ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit update source/_posts/{} --params author=${{ github.event.client_payload.author }}
 
-      - name: Download thumbnail
+      - name: Download & Update thumbnail
         if: ${{ github.event.client_payload.thumbnail_url != '' }}
         run: |
           thumbnailpath=`ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit show source/_posts/{} --param thumbnail | sed -e 's/^/\source/g'`
-          wget -q -O $thumbnailpath ${{ github.event.client_payload.thumbnail_url }}
+          wget -q -O "${thumbnailpath%.*}" ${{ github.event.client_payload.thumbnail_url }}
 
       - name: Get article title
         id: get-article-title
