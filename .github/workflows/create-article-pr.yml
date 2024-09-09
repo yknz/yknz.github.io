@@ -53,13 +53,6 @@ jobs:
 
       - name: Update author
         run: ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit update source/_posts/{} --params author=${{ github.event.client_payload.author }}
-          
-      - name: Get thumbnail filepath
-        id: thumbnail-filepath
-        if: ${{ github.event.client_payload.thumbnail_url != '' }}
-        run: |
-          thumbnailpath=`ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit show source/_posts/{} --param thumbnail | sed -e 's/^/\source/g'`
-          echo "thumbnailpath=$thumbnailpath" >> $GITHUB_OUTPUT
 
       - name: Download thumbnail
         if: ${{ github.event.client_payload.thumbnail_url != '' }}
