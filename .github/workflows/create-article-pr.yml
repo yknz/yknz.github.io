@@ -33,8 +33,6 @@ jobs:
           jq < ${GITHUB_EVENT_PATH} -r .client_payload.article_url >> cmd.txt
           echo -n '::add-mask::' >> cmd.txt
           jq < ${GITHUB_EVENT_PATH} -r .client_payload.thumbnail_url >> cmd.txt
-          echo -n '::add-mask::' >> cmd.txt
-          jq < ${GITHUB_EVENT_PATH} -r .client_payload.access_token >> cmd.txt
           cat cmd.txt
           rm cmd.txt
 
@@ -66,7 +64,8 @@ jobs:
       - name: Download thumbnail
         if: ${{ github.event.client_payload.thumbnail_url != '' }}
         run: |
-          wget -q -O ${{ steps.thumbnail-filepath.outputs.thumbnailpath }} --header="Authorization: Bearer ${{ github.event.client_payload.access_token }}" ${{ github.event.client_payload.thumbnail_url }} 
+          thumbnailpath=`ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit show source/_posts/{} --param thumbnail | sed -e 's/^/\source/g'`
+          wget -q -O $thumbnailpath ${{ github.event.client_payload.thumbnail_url }}
 
       - name: Get article title
         id: get-article-title
