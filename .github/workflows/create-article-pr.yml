@@ -57,8 +57,13 @@ jobs:
       - name: Download & Update thumbnail
         if: ${{ github.event.client_payload.thumbnail_url != '' }}
         run: |
-          thumbnailpath=`ls -rt source/_posts | tail -n 1 | xargs -I {} python3 -m matteredit show source/_posts/{} --param thumbnail | sed -e 's/^/\source/g'`
-          wget -q -O "${thumbnailpath%.*}" ${{ github.event.client_payload.thumbnail_url }}
+          articlefilepath=`ls -rt source/_posts | tail -n 1 | xargs -I {} echo source/_posts/{}`
+          thumbnailpath=`python3 -m matteredit show $articlefilepath --param thumbnail | sed -e 's/^/\source/g'`
+          filename=`curl -JLO "${{ github.event.client_payload.thumbnail_url }}" | grep filename | sed "s/^.*'\(.*\)'.*$/\1/"`
+          rm $thumbnailpath
+          newthumbnailpath="${thumbnailpath%.*}.${filename##*.}"
+          mv $filename $newthumbnailpath
+          echo $newthumbnailpath | sed -e 's/source//g' | xargs -I {} python3 -m matteredit update $articlefilepath --params thumbnail={}
 
       - name: Get article title
         id: get-article-title
