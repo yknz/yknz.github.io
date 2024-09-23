@@ -60,6 +60,7 @@ jobs:
           articlefilepath=`ls -rt source/_posts | tail -n 1 | xargs -I {} echo source/_posts/{}`
           thumbnailpath=`python3 -m matteredit show $articlefilepath --param thumbnail | sed -e 's/^/\source/g'`
           filename=`curl -JLO "${{ github.event.client_payload.thumbnail_url }}" | grep filename | sed "s/^.*'\(.*\)'.*$/\1/"`
+          echo $filename
           rm $thumbnailpath
           newthumbnailpath="${thumbnailpath%.*}.${filename##*.}"
           mv $filename $newthumbnailpath
