@@ -57,7 +57,7 @@ jobs:
       - name: Download & Update thumbnail
         if: ${{ github.event.client_payload.thumbnail_url != '' }}
         run: |
-          curl -JLOv "${{ github.event.client_payload.thumbnail_url }}"
+          curl -JLO -w '%{json}' "${{ github.event.client_payload.thumbnail_url }}"
 
       - name: Get article title
         id: get-article-title
